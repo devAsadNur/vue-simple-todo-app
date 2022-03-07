@@ -7,13 +7,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'app',
-  data () {
+  data() {
     return {
         
     }
-  }
+  },
 }
 </script>
 

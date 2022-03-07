@@ -13,8 +13,8 @@
                     <th>Action</th>
                 </tr>
                 <tr v-for="(task, index) in tasks" :key="index">
-                    <td>{{ task.name }}</td>
-                    <td class="todo-status" @click="changeStatus( task.status, index )">{{ task.status }}</td>
+                    <td>{{ task.todo_name }}</td>
+                    <td class="todo-status" @click="changeStatus( task.todo_status, index )">{{ task.todo_status }}</td>
                     <td>
                         <button class="btn-edit-todo" @click.prevent="editTask( index )">Edit</button>
                         <button class="btn-remove-todo" @click.prevent="removeTask( index )">Remove</button>
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'app-content',
     data() {
@@ -39,39 +41,26 @@ export default {
             isEdit: false,
             selectedTaskIndex: 0,
             statuses: [ 'to-do', 'in-progress', 'finished'],
-            tasks: [
-                // {
-                //     name: 'Learn Vue',
-                //     status: 'finished',
-                // },
-                // {
-                //     name: 'Build a todo app',
-                //     status: 'in-progress',
-                // },
-                // {
-                //     name: 'Deploy to Github Pages',
-                //     status: 'to-do',
-                // }
-            ],
+            tasks: [],
         }
     },
     methods: {
         createTask() {
             this.tasks.push({
-                name: this.inputTask,
-                status: 'to-do',
+                todo_name: this.inputTask,
+                todo_status: 'to-do',
             });
 
             this.inputTask = '';
         },
         updateTask( index ) {
-            this.tasks[index].name = this.inputTask;
+            this.tasks[index].todo_name = this.inputTask;
         },
         removeTask( index ) {
             this.tasks.splice( index, 1 );
         },
         editTask( index ) {
-            let taskName = this.tasks[index].name;
+            let taskName = this.tasks[index].todo_name;
             this.inputTask = taskName;
             this.inputButtonLabel = 'Update Task';
             this.isEdit = true;
@@ -81,9 +70,9 @@ export default {
             let currentStatusIndex = this.statuses.indexOf( status );
 
             if ( currentStatusIndex >= ( this.statuses.length - 1 ) ) {
-                this.tasks[index].status = this.statuses[0];
+                this.tasks[index].todo_status = this.statuses[0];
             } else {
-                this.tasks[index].status = this.statuses[++currentStatusIndex];
+                this.tasks[index].todo_status = this.statuses[++currentStatusIndex];
             }
         },
         handleTask() {
@@ -94,6 +83,20 @@ export default {
             }
         }
     },
+    mounted() {
+        axios.get('http://wepos-dev.test/wp-json/wedevs/v1/todos', {
+              proxy: {
+                protocol: window.location.protocol,
+                host: window.location.host,
+                port: window.location.port
+            },
+            auth: {
+                username: 'admin',
+                password: 'admin'
+            }
+        })
+        .then(response => (this.tasks = response.data));
+    }
 }
 </script>
 

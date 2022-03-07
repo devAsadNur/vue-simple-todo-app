@@ -17,7 +17,7 @@
                     <td class="todo-status" @click="changeStatus( task.todo_status, index )">{{ task.todo_status }}</td>
                     <td>
                         <button class="btn-edit-todo" @click.prevent="editTask( index )">Edit</button>
-                        <button class="btn-remove-todo" @click.prevent="removeTask( index )">Remove</button>
+                        <button class="btn-remove-todo" @click.prevent="removeTask( task.id )">Remove</button>
                     </td>
                 </tr>
             </table>
@@ -74,8 +74,20 @@ export default {
         updateTask( index ) {
             this.tasks[index].todo_name = this.inputTask;
         },
-        removeTask( index ) {
-            this.tasks.splice( index, 1 );
+        removeTask( id ) {
+            axios({
+                method: 'delete',
+                url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos/' + id,
+                proxy: {
+                    protocol: window.location.protocol,
+                    host: window.location.host,
+                    port: window.location.port
+                },
+                auth: {
+                    username: 'admin',
+                    password: 'admin'
+                }
+            });
         },
         editTask( index ) {
             let taskName = this.tasks[index].todo_name;

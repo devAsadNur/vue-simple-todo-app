@@ -102,8 +102,10 @@ export default {
         }
     },
     mounted() {
-        axios.get('http://wepos-dev.test/wp-json/wedevs/v1/todos', {
-              proxy: {
+        axios({
+            method: 'get',
+            url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos',
+            proxy: {
                 protocol: window.location.protocol,
                 host: window.location.host,
                 port: window.location.port

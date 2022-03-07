@@ -46,9 +46,27 @@ export default {
     },
     methods: {
         createTask() {
-            this.tasks.push({
-                todo_name: this.inputTask,
-                todo_status: 'to-do',
+            // this.tasks.push({
+            //     todo_name: this.inputTask,
+            //     todo_status: 'to-do',
+            // });
+
+            axios({
+                method: 'post',
+                url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos',
+                proxy: {
+                    protocol: window.location.protocol,
+                    host: window.location.host,
+                    port: window.location.port
+                },
+                auth: {
+                    username: 'admin',
+                    password: 'admin'
+                },
+                data: {
+                    'todo_name': this.inputTask,
+                    'todo_status': 'to-do'
+                }
             });
 
             this.inputTask = '';

@@ -5,8 +5,10 @@
                 <input type="text" placeholder="Add new todo" v-model="inputTask">
                 <button type="submit" @click.prevent="handleTask()">{{ inputButtonLabel }}</button>
             </div>
+        </form>
 
-            <table id="todo-wrapper" v-if="tasks.length">
+        <div id="todo-wrapper">
+            <table v-if="tasks.length">
                 <tr>
                     <th>Task name</th>
                     <th>Status</th>
@@ -22,10 +24,12 @@
                 </tr>
             </table>
 
-            <div v-else>
-                <p>No todo found!</p>
+            <div v-if="isLoading" id="todo-loading">
+                <img src="./assets/loading-buffering.gif" alt="Loading">
             </div>
-        </form>
+        </div>
+
+
     </div>
 </template>
 
@@ -43,10 +47,12 @@ export default {
             selectedTaskId: 0,
             statuses: [ 'to-do', 'in-progress', 'finished'],
             tasks: [],
+            isLoading: false,
         }
     },
     methods: {
         fetchAllTasks() {
+            this.isLoading = true;
             axios({
                 method: 'get',
                 url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos',
@@ -60,9 +66,13 @@ export default {
                     password: 'admin'
                 }
             })
-            .then(response => (this.tasks = response.data));
+            .then(response => {
+                this.tasks = response.data;
+                this.isLoading = false;
+            });
         },
         createTask() {
+            this.isLoading = true;
             // this.tasks.push({
             //     todo_name: this.inputTask,
             //     todo_status: 'to-do',
@@ -84,11 +94,16 @@ export default {
                     'todo_name': this.inputTask,
                     'todo_status': 'to-do'
                 }
+            })
+            .then(response => {
+                this.fetchAllTasks();
             });
 
             this.inputTask = '';
         },
         updateTask( index, id ) {
+            this.isLoading = true;
+
             // this.tasks[index].todo_name = this.inputTask;
 
             axios({
@@ -111,9 +126,12 @@ export default {
                 this.inputTask = '';
                 this.inputButtonLabel = 'Add Task';
                 this.isEdit = false;
+                this.fetchAllTasks();
             });
         },
         removeTask( id ) {
+            this.isLoading = true;
+
             axios({
                 method: 'delete',
                 url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos/' + id,
@@ -126,6 +144,9 @@ export default {
                     username: 'admin',
                     password: 'admin'
                 }
+            })
+            .then(response => {
+                this.fetchAllTasks();
             });
         },
         editTask( index, id ) {
@@ -137,6 +158,7 @@ export default {
             this.isEdit = true;
         },
         changeStatus( id, status ) {
+            this.isLoading = true;
             let currentStatusIndex = this.statuses.indexOf( status );
             let newStatus = "";
 
@@ -168,7 +190,7 @@ export default {
                 }
             })
             .then(response => {
-                this.selectedTaskStatus = '';
+                this.fetchAllTasks();
             });
         },
         handleTask() {
@@ -183,7 +205,7 @@ export default {
         this.fetchAllTasks();
     },
     updated() {
-        this.fetchAllTasks();
+        // this.fetchAllTasks();
     },
 }
 </script>
@@ -213,20 +235,26 @@ export default {
         cursor: pointer;
     }
 
-    table#todo-wrapper {
+    #todo-wrapper {
+        position: relative;
+        min-height: 300px;
+    }
+
+    #todo-wrapper table {
         border: 1px solid #ccc;
         border-collapse: collapse;
         width: 100%;
         margin: 0 auto 40px;
     }
 
-    table#todo-wrapper th, td {
+    #todo-wrapper table th,
+    #todo-wrapper table td {
         padding: 15px 10px;
         text-align: left;
         border-bottom: 1px solid #DDD;
     }
 
-    table#todo-wrapper tr:hover {
+    #todo-wrapper tabale tr:hover {
         background-color: #D6EEEE;
     }
 
@@ -234,5 +262,22 @@ export default {
     .btn-edit-todo,
     .btn-remove-todo {
         cursor: pointer;
+    }
+
+    #todo-loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #todo-loading img {
+        width: 50px;
+        height: 50px;
     }
 </style>

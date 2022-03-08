@@ -2,7 +2,7 @@
     <div id="main-content">
         <form action="">
             <div id="todo-input-wrapper">
-                <input type="text" placeholder="Add new todo" v-model="inputTask">
+                <input type="text" placeholder="Add new todo" v-model="inputTask" ref="todoInput">
                 <button type="submit" @click.prevent="handleTask()">{{ inputButtonLabel }}</button>
             </div>
         </form>
@@ -73,10 +73,6 @@ export default {
         },
         createTask() {
             this.isLoading = true;
-            // this.tasks.push({
-            //     todo_name: this.inputTask,
-            //     todo_status: 'to-do',
-            // });
 
             axios({
                 method: 'post',
@@ -103,8 +99,6 @@ export default {
         },
         updateTask( index, id ) {
             this.isLoading = true;
-
-            // this.tasks[index].todo_name = this.inputTask;
 
             axios({
                 method: 'put',
@@ -156,6 +150,7 @@ export default {
             this.selectedTaskIndex = index;
             this.selectedTaskId = id;
             this.isEdit = true;
+            this.$refs.todoInput.focus();
         },
         changeStatus( id, status ) {
             this.isLoading = true;
@@ -163,13 +158,9 @@ export default {
             let newStatus = "";
 
             if ( currentStatusIndex >= ( this.statuses.length - 1 ) ) {
-                // this.tasks[index].todo_status = this.statuses[0];
-
                 newStatus = this.statuses[0];
 
             } else {
-                // this.tasks[index].todo_status = this.statuses[++currentStatusIndex];
-
                 newStatus = this.statuses[++currentStatusIndex];
             }
 
@@ -203,10 +194,11 @@ export default {
     },
     mounted() {
         this.fetchAllTasks();
+        this.$refs.todoInput.focus();
     },
-    updated() {
-        // this.fetchAllTasks();
-    },
+    // updated() {
+    //     this.fetchAllTasks();
+    // },
 }
 </script>
 

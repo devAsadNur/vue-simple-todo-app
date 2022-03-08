@@ -46,6 +46,22 @@ export default {
         }
     },
     methods: {
+        fetchAllTasks() {
+            axios({
+                method: 'get',
+                url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos',
+                proxy: {
+                    protocol: window.location.protocol,
+                    host: window.location.host,
+                    port: window.location.port
+                },
+                auth: {
+                    username: 'admin',
+                    password: 'admin'
+                }
+            })
+            .then(response => (this.tasks = response.data));
+        },
         createTask() {
             // this.tasks.push({
             //     todo_name: this.inputTask,
@@ -161,24 +177,11 @@ export default {
             } else {
                 this.createTask();
             }
-        }
+        },
     },
     mounted() {
-        axios({
-            method: 'get',
-            url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos',
-            proxy: {
-                protocol: window.location.protocol,
-                host: window.location.host,
-                port: window.location.port
-            },
-            auth: {
-                username: 'admin',
-                password: 'admin'
-            }
-        })
-        .then(response => (this.tasks = response.data));
-    }
+        this.fetchAllTasks();
+    },
 }
 </script>
 

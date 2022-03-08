@@ -1,6 +1,6 @@
 <template>
     <footer id="footer">
-        <p>{{ copyright }}</p>
+        <p>&copy; {{ copyright }}</p>
     </footer>
 </template>
 
@@ -9,7 +9,7 @@ export default {
     name: 'app-footer',
     data() {
         return {
-            copyright: '&copy; Asad Nur, 2022. All rights reserved.',
+            copyright: 'Asad Nur, 2022. All rights reserved.',
         }
     }
 }

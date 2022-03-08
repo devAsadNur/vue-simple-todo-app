@@ -185,7 +185,7 @@ export default {
         border: 1px solid #ccc;
         border-collapse: collapse;
         width: 100%;
-        margin: 0 auto 30px;
+        margin: 0 auto 40px;
     }
 
     table#todo-wrapper th, td {

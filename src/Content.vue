@@ -14,7 +14,7 @@
                 </tr>
                 <tr v-for="(task, index) in tasks" :key="index">
                     <td>{{ task.todo_name }}</td>
-                    <td class="todo-status" @click="changeStatus( task.todo_status, index )">{{ task.todo_status }}</td>
+                    <td class="todo-status" @click="changeStatus( task.id, task.todo_status )">{{ task.todo_status }}</td>
                     <td>
                         <button class="btn-edit-todo" @click.prevent="editTask( index, task.id )">Edit</button>
                         <button class="btn-remove-todo" @click.prevent="removeTask( task.id )">Remove</button>
@@ -120,14 +120,40 @@ export default {
             this.selectedTaskId = id;
             this.isEdit = true;
         },
-        changeStatus( status, index ) {
+        changeStatus( id, status ) {
             let currentStatusIndex = this.statuses.indexOf( status );
+            let newStatus = "";
 
             if ( currentStatusIndex >= ( this.statuses.length - 1 ) ) {
-                this.tasks[index].todo_status = this.statuses[0];
+                // this.tasks[index].todo_status = this.statuses[0];
+
+                newStatus = this.statuses[0];
+
             } else {
-                this.tasks[index].todo_status = this.statuses[++currentStatusIndex];
+                // this.tasks[index].todo_status = this.statuses[++currentStatusIndex];
+
+                newStatus = this.statuses[++currentStatusIndex];
             }
+
+            axios({
+                method: 'put',
+                url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos/' + id,
+                proxy: {
+                    protocol: window.location.protocol,
+                    host: window.location.host,
+                    port: window.location.port
+                },
+                auth: {
+                    username: 'admin',
+                    password: 'admin'
+                },
+                data: {
+                    'todo_status': newStatus,
+                }
+            })
+            .then(response => {
+                this.selectedTaskStatus = '';
+            });
         },
         handleTask() {
             if ( this.isEdit ) {

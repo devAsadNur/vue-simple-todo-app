@@ -3,7 +3,7 @@
         <form action="">
             <div id="todo-input-wrapper">
                 <input type="text" placeholder="Add new todo" v-model="inputTask">
-                <button type="submit" @click.prevent="handleTask">{{ inputButtonLabel }}</button>
+                <button type="submit" @click.prevent="handleTask()">{{ inputButtonLabel }}</button>
             </div>
 
             <table id="todo-wrapper" v-if="tasks.length">
@@ -16,7 +16,7 @@
                     <td>{{ task.todo_name }}</td>
                     <td class="todo-status" @click="changeStatus( task.todo_status, index )">{{ task.todo_status }}</td>
                     <td>
-                        <button class="btn-edit-todo" @click.prevent="editTask( index )">Edit</button>
+                        <button class="btn-edit-todo" @click.prevent="editTask( index, task.id )">Edit</button>
                         <button class="btn-remove-todo" @click.prevent="removeTask( task.id )">Remove</button>
                     </td>
                 </tr>
@@ -40,6 +40,7 @@ export default {
             inputButtonLabel : 'Add Task',
             isEdit: false,
             selectedTaskIndex: 0,
+            selectedTaskId: 0,
             statuses: [ 'to-do', 'in-progress', 'finished'],
             tasks: [],
         }
@@ -71,8 +72,30 @@ export default {
 
             this.inputTask = '';
         },
-        updateTask( index ) {
-            this.tasks[index].todo_name = this.inputTask;
+        updateTask( index, id ) {
+            // this.tasks[index].todo_name = this.inputTask;
+
+            axios({
+                method: 'put',
+                url: 'http://wepos-dev.test/wp-json/wedevs/v1/todos/' + id,
+                proxy: {
+                    protocol: window.location.protocol,
+                    host: window.location.host,
+                    port: window.location.port
+                },
+                auth: {
+                    username: 'admin',
+                    password: 'admin'
+                },
+                data: {
+                    'todo_name': this.inputTask
+                }
+            })
+            .then(response => {
+                this.inputTask = '';
+                this.inputButtonLabel = 'Add Task';
+                this.isEdit = false;
+            });
         },
         removeTask( id ) {
             axios({
@@ -89,12 +112,13 @@ export default {
                 }
             });
         },
-        editTask( index ) {
+        editTask( index, id ) {
             let taskName = this.tasks[index].todo_name;
             this.inputTask = taskName;
             this.inputButtonLabel = 'Update Task';
-            this.isEdit = true;
             this.selectedTaskIndex = index;
+            this.selectedTaskId = id;
+            this.isEdit = true;
         },
         changeStatus( status, index ) {
             let currentStatusIndex = this.statuses.indexOf( status );
@@ -107,7 +131,7 @@ export default {
         },
         handleTask() {
             if ( this.isEdit ) {
-                this.updateTask( this.selectedTaskIndex );
+                this.updateTask( this.selectedTaskIndex, this.selectedTaskId );
             } else {
                 this.createTask();
             }

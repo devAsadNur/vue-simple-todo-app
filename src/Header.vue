@@ -15,9 +15,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     #header {
         text-align: center;
-        margin: 0 auto 30px;
+        margin: 0 auto 40px;
     }
 </style>

@@ -9,13 +9,13 @@ export default {
     name: 'app-footer',
     data() {
         return {
-            copyright: 'All rights reserved.',
+            copyright: '&copy; Asad Nur, 2022. All rights reserved.',
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
     #footer {
         text-align: center;
     }

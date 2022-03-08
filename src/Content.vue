@@ -156,7 +156,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     #main-content {
         max-width: 500px;
         min-height: 400px;
@@ -173,20 +173,23 @@ export default {
     #todo-input-wrapper input {
         width: 79%;
         margin-right: 1%;
+        padding: 10px;
     }
 
     #todo-input-wrapper button {
         width: 20%;
+        cursor: pointer;
     }
 
     table#todo-wrapper {
         border: 1px solid #ccc;
         border-collapse: collapse;
         width: 100%;
+        margin: 0 auto 30px;
     }
 
     table#todo-wrapper th, td {
-        padding: 8px;
+        padding: 15px 10px;
         text-align: left;
         border-bottom: 1px solid #DDD;
     }
